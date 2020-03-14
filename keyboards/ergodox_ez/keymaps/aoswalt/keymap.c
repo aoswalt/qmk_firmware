@@ -84,9 +84,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 [_FN] = LAYOUT_ergodox_pretty(
   VERSION,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_____,        KC_____,  KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,
-  _______,  KC_EXLM,  KC_AT,    KC_LCBR,  KC_RCBR,  KC_PIPE,  KC_____,        KC_____,  KC_____,  KC_7,     KC_8,     KC_O,     KC_ASTR,  KC_F12,
-  _______,  KC_HASH,  KC_DLR,   KC_LPRN,  KC_RPRN,  KC_GRV,                             KC_____,  KC_4,     KC_5,     KC_L,     KC_PLUS,  KC_____,
-  _______,  KC_PERC,  KC_CIRC,  KC_LBRC,  KC_RBRC,  KC_TILD,  KC_____,        KC_____,  KC_AMPR,  KC_1,     KC_2,     KC_DOT,   KC_BSLS,  KC_____,
+  _______,  KC_EXLM,  KC_AT,    KC_LCBR,  KC_RCBR,  KC_PIPE,  KC_____,        KC_____,  KC_____,  KC_7,     KC_8,     KC_9,     KC_ASTR,  KC_F12,
+  _______,  KC_HASH,  KC_DLR,   KC_LPRN,  KC_RPRN,  KC_GRV,                             KC_____,  KC_4,     KC_5,     KC_6,     KC_PLUS,  KC_____,
+  _______,  KC_PERC,  KC_CIRC,  KC_LBRC,  KC_RBRC,  KC_TILD,  KC_____,        KC_____,  KC_AMPR,  KC_1,     KC_2,     KC_3,     KC_BSLS,  KC_____,
   EEP_RST,  KC_____,  KC_____,  KC_____,  KC_____,                                                KC_0,     KC_____,  KC_DOT,   KC_EQL,   MD_BOOT,
                                                     KC_____,  KC_____,        KC_____,  KC_____,
                                                               KC_____,        KC_____,
