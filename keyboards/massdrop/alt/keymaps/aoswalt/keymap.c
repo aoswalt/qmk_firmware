@@ -81,8 +81,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     */
 };
 
+uint32_t desired = RGB_MATRIX_RAINBOW_MOVING_CHEVRON;
+
 // Runs just one time when the keyboard initializes.
 void matrix_init_user(void) {
+  rgblight_mode(desired);
 };
 
 // Runs constantly in the background, in a loop.
@@ -93,13 +96,42 @@ void matrix_scan_user(void) {
 #define MODS_CTRL  (keyboard_report->mods & MOD_BIT(KC_LCTL) || keyboard_report->mods & MOD_BIT(KC_RCTRL))
 #define MODS_ALT  (keyboard_report->mods & MOD_BIT(KC_LALT) || keyboard_report->mods & MOD_BIT(KC_RALT))
 
+uint8_t prev = _DEFAULT;
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+  switch (get_highest_layer(state)) {
+    case _GAME:
+      if (prev != _GAME && prev != _GAME_FN) {
+        desired = rgb_matrix_get_mode();
+      }
+      rgb_matrix_mode_noeeprom(RGB_MATRIX_MULTISPLASH);
+      /* rgblight_mode_noeeprom(1); */
+      break;
+    case _GAME_FN:
+      if (prev != _GAME && prev != _GAME_FN) {
+        desired = rgb_matrix_get_mode();
+      }
+      rgb_matrix_mode_noeeprom(RGB_MATRIX_BREATHING);
+      /* rgblight_mode_noeeprom(1); */
+      break;
+    default: //  for any other layers, or the default layer
+      if (prev == _GAME || prev == _GAME_FN) {
+        rgb_matrix_mode(desired);
+      }
+      break;
+  }
+
+  prev = biton32(state);
+  return state;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     static uint32_t key_timer;
 
     switch (keycode) {
         case U_T_AUTO:
             if (record->event.pressed && MODS_SHIFT && MODS_CTRL) {
-                TOGGLE_FLAG_AND_PRINT(usb_extra_manual, "USB extra port manual mode");
+              TOGGLE_FLAG_AND_PRINT(usb_extra_manual, "USB extra port manual mode");
             }
             return false;
         case U_T_AGCR:
