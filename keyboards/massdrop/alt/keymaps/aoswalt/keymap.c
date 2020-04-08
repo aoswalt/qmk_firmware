@@ -104,7 +104,8 @@ layer_state_t layer_state_set_user(layer_state_t state) {
       if (prev != _GAME && prev != _GAME_FN) {
         desired = rgb_matrix_get_mode();
       }
-      rgb_matrix_mode_noeeprom(RGB_MATRIX_MULTISPLASH);
+      /* rgb_matrix_mode_noeeprom(RGB_MATRIX_MULTISPLASH); */
+      rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_GAME);
       /* rgblight_mode_noeeprom(1); */
       break;
     case _GAME_FN:
