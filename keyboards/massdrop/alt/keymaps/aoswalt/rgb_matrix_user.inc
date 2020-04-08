@@ -109,19 +109,15 @@ enum leds {
   ALT_LED_UNDER38
 };
 
-// Massdrop ALT defines the underglow edge leds as being the leds on the edge of the matrix.
-// from https://github.com/robhaswell/qmk_firmware/blob/f7dbe8bfc2bd1744b15b17c3ac73b66089f3add9/keyboards/massdrop/alt/keymaps/custom/rgb_matrix_user.inc
-// values referenced in config_led.c
-static bool massdrop_is_underglow(int index) {
-  point_t* point = &g_led_config.point[index];
-  return (point->x <= 1 || point->y <= 1 || point->x >= 222 || point->y >= 62);
+static bool is_underglow(int index) {
+  return index >= ALT_LED_UNDER01;
 }
 
 static bool GAME(effect_params_t* params) {
   RGB_MATRIX_USE_LIMITS(led_min, led_max);
 
   for (uint8_t i = led_min; i < led_max; i++) {
-    if (massdrop_is_underglow(i)) {
+    if (is_underglow(i)) {
       rgb_matrix_set_color(i, 0x00, 0xff, 0xff);
     } else {
       rgb_matrix_set_color(i, 0xff, 0xff, 0x00);
