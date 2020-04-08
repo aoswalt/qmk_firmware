@@ -1,6 +1,7 @@
 RGB_MATRIX_EFFECT(GAME)
 
 #ifdef RGB_MATRIX_CUSTOM_EFFECT_IMPLS
+// leds {{{1
 enum leds {
   ALT_LED_ESC = 0,
   ALT_LED_1,
@@ -108,6 +109,7 @@ enum leds {
   ALT_LED_UNDER37,
   ALT_LED_UNDER38
 };
+// }}}
 
 static bool is_underglow(int index) {
   return index >= ALT_LED_UNDER01;
@@ -135,3 +137,5 @@ static bool GAME(effect_params_t* params) {
 }
 
 #endif
+
+// vim:foldmethod=marker
