@@ -115,23 +115,48 @@ static bool is_underglow(int index) {
   return index >= ALT_LED_UNDER01;
 }
 
+static void breathe(int index) {
+  HSV hsv = rgb_matrix_config.hsv;
+  uint16_t time = scale16by8(g_rgb_counters.tick, rgb_matrix_config.speed / 8);
+  hsv.v = scale8(abs8(sin8(time) - 128) * 2, hsv.v) * .66;
+  RGB rgb = hsv_to_rgb(hsv);
+  rgb_matrix_set_color(index, rgb.r, rgb.g, rgb.b);
+}
+
+static void background(int index) {
+  HSV hsv = rgb_matrix_config.hsv;
+  hsv.s *= .5;
+  hsv.v *= .5;
+  RGB rgb = hsv_to_rgb(hsv);
+  rgb_matrix_set_color(index, rgb.r, rgb.g, rgb.b);
+}
+
+static void highlight(int index) {
+  HSV hsv = rgb_matrix_config.hsv;
+  hsv.h += 128;
+  RGB rgb = hsv_to_rgb(hsv);
+
+  rgb_matrix_set_color(index, rgb.r, rgb.g, rgb.b);
+}
+
 static bool GAME(effect_params_t* params) {
   RGB_MATRIX_USE_LIMITS(led_min, led_max);
 
   for (uint8_t i = led_min; i < led_max; i++) {
     if (is_underglow(i)) {
-      rgb_matrix_set_color(i, 0x00, 0xff, 0xff);
+      breathe(i);
     } else {
-      rgb_matrix_set_color(i, 0xff, 0xff, 0x00);
+      background(i);
     }
-    rgb_matrix_set_color(ALT_LED_ESC, 0xff, 0x00, 0x00);
-    rgb_matrix_set_color(ALT_LED_W, 0xff, 0x00, 0x00);
-    rgb_matrix_set_color(ALT_LED_A, 0xff, 0x00, 0x00);
-    rgb_matrix_set_color(ALT_LED_S, 0xff, 0x00, 0x00);
-    rgb_matrix_set_color(ALT_LED_D, 0xff, 0x00, 0x00);
-    rgb_matrix_set_color(ALT_LED_SPACE, 0xff, 0x00, 0x00);
-    rgb_matrix_set_color(ALT_LED_FN, 0xff, 0x00, 0x00);
   }
+
+  highlight(ALT_LED_W);
+  highlight(ALT_LED_A);
+  highlight(ALT_LED_S);
+  highlight(ALT_LED_D);
+  highlight(ALT_LED_ESC);
+  highlight(ALT_LED_SPACE);
+  highlight(ALT_LED_FN);
 
   return led_max < DRIVER_LED_TOTAL;
 }
