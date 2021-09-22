@@ -1,4 +1,5 @@
 RGB_MATRIX_EFFECT(GAME)
+RGB_MATRIX_EFFECT(GAME2)
 
 #ifdef RGB_MATRIX_CUSTOM_EFFECT_IMPLS
 // leds {{{1
@@ -117,7 +118,7 @@ static bool is_underglow(int index) {
 
 static void breathe(int index) {
   HSV hsv = rgb_matrix_config.hsv;
-  uint16_t time = scale16by8(g_rgb_counters.tick, rgb_matrix_config.speed / 8);
+  uint16_t time = scale16by8(g_rgb_timer, rgb_matrix_config.speed / 8);
   hsv.v = scale8(abs8(sin8(time) - 128) * 2, hsv.v) * .66;
   RGB rgb = hsv_to_rgb(hsv);
   rgb_matrix_set_color(index, rgb.r, rgb.g, rgb.b);
@@ -145,6 +146,28 @@ static bool GAME(effect_params_t* params) {
   for (uint8_t i = led_min; i < led_max; i++) {
     if (is_underglow(i)) {
       breathe(i);
+    } else {
+      background(i);
+    }
+  }
+
+  highlight(ALT_LED_W);
+  highlight(ALT_LED_A);
+  highlight(ALT_LED_S);
+  highlight(ALT_LED_D);
+  highlight(ALT_LED_ESC);
+  highlight(ALT_LED_SPACE);
+  highlight(ALT_LED_FN);
+
+  return led_max < DRIVER_LED_TOTAL;
+}
+
+static bool GAME2(effect_params_t* params) {
+  RGB_MATRIX_USE_LIMITS(led_min, led_max);
+
+  for (uint8_t i = led_min; i < led_max; i++) {
+    if (is_underglow(i)) {
+      highlight(i);
     } else {
       background(i);
     }

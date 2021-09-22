@@ -6,6 +6,7 @@ enum alt_layers {
   _MEDIA,
   _GAME,
   _GAME_FN,
+  _GAME_MACRO,
 };
 
 enum alt_keycodes {
@@ -16,6 +17,8 @@ enum alt_keycodes {
     DBG_KBD,                //DEBUG Toggle Keyboard Prints
     DBG_MOU,                //DEBUG Toggle Mouse Prints
     MD_BOOT,                //Restart into bootloader after hold timeout
+    NMS_BLD,
+    NMS_SEL,
 };
 // led direction and breathing?
 
@@ -32,8 +35,7 @@ enum alt_keycodes {
 #define L_GAME TG(_GAME)
 #define M_GFN MO(_GAME_FN)
 #define M_MEDIA MO(_MEDIA)
-
-keymap_config_t keymap_config;
+#define M_MACRO MO(_GAME_MACRO)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_DEFAULT] = LAYOUT_65_ansi_blocker(
@@ -55,12 +57,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______, \
         KC_LCTL,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,  _______, \
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,  _______, \
-        M_GFN,    KC_NO,    _______,                                _______,                                _______,  _______,  _______,  _______,  _______  \
+        M_GFN,    M_MACRO,    _______,                                _______,                                _______,  _______,  _______,  _______,  _______  \
     ),
     [_GAME_FN] = LAYOUT_65_ansi_blocker(
         KC_GRV,   KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   _______,  _______, \
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______, \
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,  _______, \
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,  _______, \
+        _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  _______,  _______  \
+    ),
+    [_GAME_MACRO] = LAYOUT_65_ansi_blocker(
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______, \
+        _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______, \
+        NMS_BLD,  NMS_SEL,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,  _______, \
         _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,  _______, \
         _______,  _______,  _______,                                _______,                                _______,  _______,  _______,  _______,  _______  \
     ),
@@ -101,7 +110,7 @@ uint8_t prev = _DEFAULT;
 layer_state_t layer_state_set_user(layer_state_t state) {
   switch (get_highest_layer(state)) {
     case _GAME:
-      if (prev != _GAME && prev != _GAME_FN) {
+      if (prev != _GAME && prev != _GAME_FN && prev != _GAME_MACRO) {
         desired = rgb_matrix_get_mode();
       }
       /* rgb_matrix_mode_noeeprom(RGB_MATRIX_MULTISPLASH); */
@@ -109,14 +118,21 @@ layer_state_t layer_state_set_user(layer_state_t state) {
       /* rgblight_mode_noeeprom(1); */
       break;
     case _GAME_FN:
-      if (prev != _GAME && prev != _GAME_FN) {
+      if (prev != _GAME && prev != _GAME_FN && prev != _GAME_MACRO) {
         desired = rgb_matrix_get_mode();
       }
       rgb_matrix_mode_noeeprom(RGB_MATRIX_BREATHING);
       /* rgblight_mode_noeeprom(1); */
       break;
+    case _GAME_MACRO:
+      if (prev != _GAME && prev != _GAME_FN && prev != _GAME_MACRO) {
+        desired = rgb_matrix_get_mode();
+      }
+      rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_GAME2);
+      /* rgblight_mode_noeeprom(1); */
+      break;
     default: //  for any other layers, or the default layer
-      if (prev == _GAME || prev == _GAME_FN) {
+      if (prev == _GAME || prev == _GAME_FN || prev == _GAME_MACRO) {
         rgb_matrix_mode(desired);
       }
       break;
@@ -192,6 +208,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     rgb_matrix_enable_noeeprom();
                   }
                   break;
+              }
+            }
+            return false;
+        // glitch build placement
+        case NMS_BLD:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LCTRL) SS_DELAY(5000) SS_UP(X_LCTRL) SS_DELAY(9));
+                register_code(KC_BTN1);
+                CLK_delay_ms(17);
+                unregister_code(KC_BTN1);
+            }
+            return false;
+        // sell food for nanties
+        case NMS_SEL:
+            if (record->event.pressed) {
+                for(int i = 0; i < 50; i++) {
+                  SEND_STRING(SS_DOWN(X_E) SS_DELAY(2500) SS_UP(X_E) SS_DELAY(9));
+                  for(int j = 0; j < 125; j++) {
+                    register_code(KC_BTN1);
+                    CLK_delay_ms(17);
+                    unregister_code(KC_BTN1);
+                    CLK_delay_ms(17);
+                    /* SEND_STRING(SS_DOWN(X_BTN1) SS_DELAY(17) SS_UP(X_BTN1)); */
+                  }
               }
             }
             return false;
