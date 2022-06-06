@@ -28,7 +28,9 @@ enum layers {
 
 enum custom_keycodes {
     FOO = SAFE_RANGE,
-    NMS_BLD,
+    NMS_ADJ,
+    NMS_WIR,
+    NMS_CAC,
     NMS_SEL,
     MD_BOOT
 };
@@ -124,10 +126,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_GAME_MACRO] = LAYOUT(
+        _______, NMS_WIR, NMS_CAC, _______, NMS_ADJ, NMS_SEL, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
-        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
-        NMS_BLD, NMS_SEL, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,          _______,
+        _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,          _______,
         _______,          _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______,
         _______, _______, _______,                            _______,                            _______, _______, _______, _______, _______, _______
     ),
@@ -244,13 +246,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
               }
             }
             return false;
-        // glitch build placement
-        case NMS_BLD:
+        // adj glitch
+        case NMS_ADJ:
             if (record->event.pressed) {
-                SEND_STRING(SS_DOWN(X_LCTRL) SS_DELAY(5000) SS_UP(X_LCTRL) SS_DELAY(9));
+                SEND_STRING(SS_DOWN(X_E));
                 register_code(KC_BTN1);
                 wait_ms(17);
                 unregister_code(KC_BTN1);
+                SEND_STRING(SS_UP(X_E));
+            }
+            return false;
+        // wire glitch
+        case NMS_WIR:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_Q));
+                register_code(KC_BTN1);
+                wait_ms(17);
+                unregister_code(KC_BTN1);
+                SEND_STRING(SS_UP(X_Q));
+            }
+            return false;
+        // cache glitch piece
+        case NMS_CAC:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_Q) SS_DOWN(X_C) SS_DELAY(17) SS_UP(X_C) SS_UP(X_Q));
             }
             return false;
         // sell food for nanties
