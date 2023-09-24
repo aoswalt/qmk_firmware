@@ -189,7 +189,7 @@ static bool GAME(effect_params_t* params) {
   highlight(KB_LED_SPACE);
   highlight(KB_LED_FN);
 
-  return led_max < DRIVER_LED_TOTAL;
+  return led_max < RGB_MATRIX_LED_COUNT;
 }
 
 static bool GAME2(effect_params_t* params) {
@@ -211,7 +211,7 @@ static bool GAME2(effect_params_t* params) {
   highlight(KB_LED_SPACE);
   highlight(KB_LED_FN);
 
-  return led_max < DRIVER_LED_TOTAL;
+  return led_max < RGB_MATRIX_LED_COUNT;
 }
 
 #endif
